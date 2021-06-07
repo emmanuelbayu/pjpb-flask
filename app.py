@@ -1,9 +1,8 @@
-from flask import Flask
+from flask import Flask, request
 from db import mongo
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = "mongodb+srv://dbAdmin:demuji@pjpb.d1llr.mongodb.net/lapor?retryWrites=true&w=majority"
-
 mongo.init_app(app)
 
 @app.route("/")
@@ -13,18 +12,29 @@ def index():
 #ADD A USER
 @app.route("/add_user", methods=["POST", "GET"])
 def add_user():
-    users_collection = mongo.db.user
-    users_collection.insert_one({
-        "email" : "test",
-        "uid" : "test",
-        "display_name" : "adasdasd",
-        "photo_url" : "test",
-        "kontak" : "14045",
-        "alamat" : "surga"
-    })
-    return "<h1>User added successfully</h1>"
+    if request.method == "GET":
+        return "<h1>Adding user</h1>"
+    
+    elif request.method == "POST":
+        email = request.json["email"]
+        uid = request.json["uid"]
+        display_name = request.json["display_name"]
+        photo_url = request.json["photo_url"]
+        kontak = request.json["kontak"]
+        alamat =request.json["alamat"]
+        
+        users_collection = mongo.db.user
+        users_collection.insert_one({
+            'email' : email,
+            'uid' : uid,
+            'display_name' : display_name,
+            'photo_url' : photo_url,
+            'kontak' : kontak,
+            'alamat' : alamat
+        })
+        return f"email : {email}, uid : {uid}, display_name : {display_name}, photo_url : {photo_url}, kontak : {kontak}, alamat : {alamat}"
 
-#UPDATE USER DISPLAY NAME
+#UPDATE USER DISPLAY NAME   
 @app.route("/update_user/<display_name>")
 def update_user(display_name):
     users_collection = mongo.db.user
