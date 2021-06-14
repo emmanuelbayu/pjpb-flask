@@ -1,6 +1,5 @@
 from calendar import c
 from flask import Flask, request, g
-from pyasn1.type.univ import Null
 from db import mongo
 import os
 import requests
@@ -76,18 +75,36 @@ def add_user():
 
 #UPDATE USER DISPLAY NAME   
 @app.route("/update_user/", methods=["POST"])
-# @middleware
+@middleware
 def update_user():
     users_collection = mongo.db.user
+    email = request.json['email']
     uid = request.json['uid']
+    username = request.json['username']
     display_name = request.json['display_name']
-    users_update = users_collection.find_one({"uid" : uid})
-    users_update["display_name"] = display_name
-    users_collection.save(users_update)
-    message = {
-        'message' : 'User updated'
-    }
-    return message
+    photo_url = request.json['photo_url']
+    kontak = request.json['kontak']
+    alamat = request.json['alamat']
+    
+    try:
+        users_update = users_collection.find_one({"uid" : uid})
+        users_update["email"] = email
+        users_update["uid"] = uid
+        users_update["username"] = username
+        users_update["display_name"] = display_name
+        users_update["photo_url"] = photo_url
+        users_update["kontak"] = kontak
+        users_update["alamat"] = alamat
+        users_collection.save(users_update)
+        message = {
+            'message' : 'User updated'
+        }
+        return message
+    except:
+        message = {
+            'message' : 'Userid incorrect'
+        }
+        return message
 
 if __name__ == '__main__':
     app.run(debug=True)
