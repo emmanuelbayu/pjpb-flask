@@ -1,10 +1,6 @@
 from flask import Flask, request, url_for, redirect, session, jsonify
 from db import mongo
-from authlib.integrations.flask_client import OAuth
 import os
-from google.oauth2 import id_token
-import google.auth.transport.requests
-from google_auth_oauthlib.flow import Flow
 
 app = Flask(__name__)
 app.config["MONGO_URI"] = os.getenv('MONGO_URI')
