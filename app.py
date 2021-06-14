@@ -1,9 +1,15 @@
-from flask import Flask, request
+from flask import Flask, request, url_for, redirect, session, jsonify
 from db import mongo
+from authlib.integrations.flask_client import OAuth
+import os
+from google.oauth2 import id_token
+import google.auth.transport.requests
+from google_auth_oauthlib.flow import Flow
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb+srv://dbAdmin:demuji@pjpb.d1llr.mongodb.net/lapor?retryWrites=true&w=majority"
-mongo.init_app(app)
+app.config["MONGO_URI"] = os.getenv('MONGO_URI')
+
+mongo.init_app(app) #Mongodb config
 
 @app.route("/")
 def index():
@@ -32,7 +38,16 @@ def add_user():
             'kontak' : kontak,
             'alamat' : alamat
         })
-        return f"email : {email}, uid : {uid}, display_name : {display_name}, photo_url : {photo_url}, kontak : {kontak}, alamat : {alamat}"
+        
+        value = ({
+            'email' : email,
+            'uid' : uid,
+            'display_name' : display_name,
+            'photo_url' : photo_url,
+            'kontak' : kontak,
+            'alamat' : alamat
+        })
+        return value
 
 #UPDATE USER DISPLAY NAME   
 @app.route("/update_user/<display_name>")
